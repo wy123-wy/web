@@ -48,18 +48,17 @@
                     <li><a href="{{ url_for('login') }}">登录</a></li>
                     <li><a href="{{ url_for('register') }}">注册</a></li>
                 {% else %}
-                    <li class="dropdown">
-                        {#  这是一个下拉列表   #}
-                    <a href="#" class="dropdown-toggle"
-                       data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="false">当前用户:{{ session.user }}<span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                    {#    在下拉列表中划一条线分隔开    #}
-                        <li role="separator" class="divider"></li>
-                        <li><a href="{{ url_for('logout') }}">注销</a></li>
-
-                    </ul>
-                    </li>
+                <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    当前用户:{{ session.user }}<span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <li role="separator" class="divider"></li>
+                    <li><a href="{{ url_for('logout') }}">注销</a></li>
+                    <li><a href="#">个人中心</a></li>
+                    <li><a href="#">Separated link</a></li>
+                </ul>
+                </div>
             </ul>
             {% endif %}
         </div>

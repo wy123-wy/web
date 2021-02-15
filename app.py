@@ -1,8 +1,15 @@
 import os
 import pymysql
-
+from flask import Flask
+import traceback
 from flask import Flask, render_template, redirect, request, url_for, flash, session
 from functools import wraps
+
+# 创建连接
+#conn = pymysql.connect(host='127.0.0.1', user='root', password='123456', port=3306,
+                       #db='bookrecommend')
+# 创建游标
+#cur = conn.cursor()
 
 users = [
     {
@@ -10,8 +17,8 @@ users = [
         'password': 'root'
     },
     {
-        'username': 'westos',
-        'password': 'westos'
+        'username': 'wy',
+        'password': '123456'
     }
 ]
 
@@ -29,23 +36,29 @@ def is_login(f):
         # 判断session对象中是否有seesion['user'],
         # 如果包含信息， 则登录成功， 可以访问主页；
         # 如果不包含信息， 则未登录成功， 跳转到登录界面;
-        if session.get('user', None) != 'root' :
+        #user_info = request.form.to_dict()
+        #print(user_info.get('identype'))
+        #if user_info.get('identype') == 'student':
+        if session.get('user', None):
             return f(*args, **kwargs)
         else:
             flash('用户必须登陆才能访问%s' % f.__name__)
-            return redirect(url_for('login'))
+        return redirect(url_for('login'))
 
     return wrapper
 
 
 def is_admin(f):
-    """用来判断用户是否登录成功"""
+    """用来判断管理员是否登录成功"""
 
     @wraps(f)
     def wrapper(*args, **kwargs):
         # 判断session对象中是否有seesion['user']等于root,
         # 如果包含信息， 则登录成功， 可以访问主页；
         # 如果不包含信息， 则未登录成功， 跳转到登录界面;；
+        #user_info = request.form.to_dict()
+        #print(user_info.get('identype'))
+        #if user_info.get('identype') == 'admin':
         if session.get('user', None) == 'root':
             return f(*args, **kwargs)
         else:
@@ -58,7 +71,7 @@ def is_admin(f):
 @app.route('/')
 @is_login
 def user():
-    return render_template('user.html')
+    return render_template('index.html')
 
 @app.route('/')
 @is_admin
@@ -93,7 +106,7 @@ def login():
             if user['username'] == username and user['password'] == password:
                 #  将用户登录的信息存储到session中;
                 session['user'] = username
-                return redirect(url_for('index'))
+                return redirect(url_for('user'))
             if user['username'] == username and user['password'] != password:
                 # 出现一个闪现信息;
                 flash('%s用户密码错误，请重新登陆....' % (username))
@@ -130,7 +143,7 @@ def delete(username):
     #     flash('用户%s不存在'%username)
 
     # 删除成功， 跳转到/list/路由中.....
-    return redirect(url_for('index'))
+    return redirect(url_for('list'))
 
 
 @app.route('/upload/', methods=['GET', 'POST'])
